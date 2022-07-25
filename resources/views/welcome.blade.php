@@ -52,6 +52,8 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
         <h3>Details:</h3>
         <pre>
             {{ print_r(Auth::user()->toArray()) }}
+
+            NIK dari keycloak: {{ session('nik') }}
         </pre>
         @else
         <strong>Anda belum login. Silahkan login terlebih dahulu</strong>

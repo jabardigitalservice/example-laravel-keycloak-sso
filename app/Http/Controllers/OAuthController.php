@@ -20,6 +20,10 @@ class OAuthController extends Controller
 {
     public function redirect()
     {
+        // refresh config to avoid stale cache
+        config([
+          'services.keycloak.client_id' => env('KEYCLOAK_CLIENT_ID'),
+        ]);
         return Socialite::driver('keycloak')->redirect();
     }
 
@@ -41,12 +45,17 @@ class OAuthController extends Controller
             ],
         );
 
+        // parse access token from keycloak using public key from Keycloak's JWK endpoint
+        $decodedAccessToken = $this->parseJWTToken($keycloakUser->accessTokenResponseBody['access_token']);
+        session(['nik' => $decodedAccessToken->nik ?? '-' ]);;
+
         // log user from keycloak into current session
         Auth::login($user);
 
         // map Keycloak's session_id with Laravel's session_id
         $cacheKey = 'keycloak_session_id_map:' . session('KEYCLOAK_SESSION_ID');
         \Cache::put($cacheKey, \Session::getId() );
+        info("Map id $cacheKey with session " . \Cache::get($cacheKey));
 
         return redirect('/');
     }
@@ -70,18 +79,27 @@ class OAuthController extends Controller
     public function logoutWebhook(Request $request)
     {
         $logoutToken = $request->logout_token;
+        info('logout webhook request received');
 
         // parse logout token from keycloak using public key from Keycloak's JWK endpoint
-        $jwks_response = file_get_contents(env('KEYCLOAK_BASE_URL') . '/realms/' . env('KEYCLOAK_REALM') . '/protocol/openid-connect/certs');
-        $jwks = json_decode($jwks_response);
-        $decoded = JWT::decode($logoutToken, JWK::parseKeySet($jwks));
+        $decoded = $this->parseJWTToken($logoutToken);
 
         $cacheKey = 'keycloak_session_id_map:' . $decoded->sid;
         $laravelSessionId = \Cache::get($cacheKey);
 
+        info("keycloak session id: $decoded->id , laravel session id: $laravelSessionId");
+
         \Session::getHandler()->destroy($laravelSessionId);
 
         return response('ok');
+    }
+
+    public function parseJWTToken($token)
+    {
+        // parse JWT token from keycloak using public key from Keycloak's JWK endpoint
+        $jwks_response = file_get_contents(env('KEYCLOAK_BASE_URL') . '/realms/' . env('KEYCLOAK_REALM') . '/protocol/openid-connect/certs');
+        $jwks = json_decode($jwks_response, true);
+        return JWT::decode($token, JWK::parseKeySet($jwks));
     }
 }
 
