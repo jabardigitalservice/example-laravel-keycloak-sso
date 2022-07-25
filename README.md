@@ -3,6 +3,8 @@ Aplikasi Demo Integrasi SSO Keycloak-Laravel
 
 Contoh aplikasi Laravel sederhana untuk demo integrasi dengan SSO Keycloak
 
+![Screenshot](/screenshot.png?raw=true "Screenshot of example demo site")
+
 ## Fitur
 - Single Sign-In
 - Single Sign-Out dengan backchannel logout flow
