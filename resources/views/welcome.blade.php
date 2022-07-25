@@ -46,7 +46,7 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
         <strong>Selamat datang, {{ Auth::user()->name }}</strong>
         <p>
             <button onclick="window.location='{{ route('oauth.logout') }}'">
-              Keycloak Socialite Logout
+                Logout from all application in this session
             </button>
         </p>
         <h3>Details:</h3>
@@ -59,7 +59,7 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
         <strong>Anda belum login. Silahkan login terlebih dahulu</strong>
         <p>
             <button onclick="window.location='{{ route('oauth.login') }}'">
-              Keycloak Socialite Login
+                Login with Jabar SSO
             </button>
         </p>
         @endauth

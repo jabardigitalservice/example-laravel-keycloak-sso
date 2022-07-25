@@ -53,7 +53,7 @@ class OAuthController extends Controller
         Auth::login($user);
 
         // map Keycloak's session_id with Laravel's session_id
-        $cacheKey = 'keycloak_session_id_map:' . session('KEYCLOAK_SESSION_ID');
+        $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . session('KEYCLOAK_SESSION_ID');
         \Cache::put($cacheKey, \Session::getId() );
         info("Map id $cacheKey with session " . \Cache::get($cacheKey));
 
@@ -84,10 +84,10 @@ class OAuthController extends Controller
         // parse logout token from keycloak using public key from Keycloak's JWK endpoint
         $decoded = $this->parseJWTToken($logoutToken);
 
-        $cacheKey = 'keycloak_session_id_map:' . $decoded->sid;
+        $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $decoded->sid;
         $laravelSessionId = \Cache::get($cacheKey);
 
-        info("keycloak session id: $decoded->sid , laravel session id: $laravelSessionId");
+        info("cache key: $cacheKey , laravel session id: $laravelSessionId");
 
         \Session::getHandler()->destroy($laravelSessionId);
 
