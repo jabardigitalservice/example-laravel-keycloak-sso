@@ -33,7 +33,7 @@ return [
     'keycloak' => [
         'client_id' => env('KEYCLOAK_CLIENT_ID'),
         'client_secret' => env('KEYCLOAK_CLIENT_SECRET'),
-        'redirect' => '/auth/callback',
+        'redirect' => env('KEYCLOAK_REDIRECT_URL'),
         'base_url' => env('KEYCLOAK_BASE_URL'),   // Specify your keycloak server URL here
         'realms' => env('KEYCLOAK_REALM')         // Specify your keycloak realm
     ],

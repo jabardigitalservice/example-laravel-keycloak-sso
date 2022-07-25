@@ -87,7 +87,7 @@ class OAuthController extends Controller
         $cacheKey = 'keycloak_session_id_map:' . $decoded->sid;
         $laravelSessionId = \Cache::get($cacheKey);
 
-        info("keycloak session id: $decoded->id , laravel session id: $laravelSessionId");
+        info("keycloak session id: $decoded->sid , laravel session id: $laravelSessionId");
 
         \Session::getHandler()->destroy($laravelSessionId);
 
