@@ -11,17 +11,9 @@ Contoh aplikasi Laravel sederhana untuk demo integrasi dengan SSO Keycloak
 - Display data user
 - Custom styling untuk mempermudah proses demo
 
-## setting penting
-- KEYCLOAK_BASE_URL
-- KEYCLOAK_REALM
-- KEYCLOAK_CLIENT_ID
-- KEYCLOAK_REDIRECT_URL
-- STYLE_COLOR
-- APP_NAME
-
 ## install
 1. clone
-2. edit .env_base from .env.example . We use custom .env filename so it wouldn be read by laravel. instead it would be supplied from docker via docker compose settings
+2. edit `.env_base` from `.env.example` . We use custom `.env` filename so it wouldn't be read by Laravel. instead it would be supplied from docker via docker compose settings
 3. Setup proper URL routing. See section below about URL settings for integration
 4. Run application. The easiest way is to use `docker compose up`
 However you could also run laravel manually by using `php artisan serve` command. you could also running multiple website in the same computer by modifying env var. Example:
@@ -33,6 +25,15 @@ However you could also run laravel manually by using `php artisan serve` command
   # in other terminal
   APP_NAME="Aplikasi Kota Bogor" STYLE_COLOR=blue KEYCLOAK_CLIENT=client_bogor php artisan serve --port 8002
   ```
+
+## Penjelasan terkait fungsionalitas single sign-in & single sign-out
+
+Implementasi inti terkait Single Sign-On dan Single Sign-Off ada di controller `App\Http\Controllers\OAuthController.php`. Di sana ada 4 metode penting:
+
+- `redirect()` : metode yang dipanggil ketika user melakukan login dengan Single Sign-On
+- `callback()` : metode yang dipanggil ketika user kembali dari halaman SSO. Di fungsi ini juga terjadi pencatatan session id yang diperlukan untuk fungsi Single Sign-Out
+- `logout()` : metode yang dipanggil ketika user ingin melakukan logout dari web yang saat ini digunakan. metode ini akan meredirect user ke web SSO, yang kemudian akan melogout semua sesi di browser tersebut dan mengirimkan 'Backchannel Logout Request'
+- `logoutWebhook()` : metode yang dipanggil ketika web menerima 'Backchannel Logout Request'. Server akan memeriksa nilai session id yang dikirimkan oleh server SSO, dan menghapus semua session yang terkait dengan session tersebut sehingga user pun ter-logout.
 
 ## Notes terkait backchannel logout
 - jangan lupa di update juga setting client untuk url backchannel logout agar fungsi Single Sign-Out bisa berjalan
@@ -51,3 +52,4 @@ However you could also run laravel manually by using `php artisan serve` command
     ```
 
     entry di atas tujuannya agar setiap container bisa diakses menggunakan nama containernya, baik dari host maupun dari jaringan internal docker
+
