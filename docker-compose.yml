@@ -10,13 +10,39 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
 
-  web:
+  web_bkd:
     build:
       context: .
     ports:
       - 8000:8000
-      - 8001:8001
-      - 8002:8002
+    env_file:
+      - .env_base
     volumes:
       - .:/app
+    environment:
+      - APP_NAME="Aplikasi BKD"
+      - STYLE_COLOR=purple
+      - KEYCLOAK_BASE_URL=http://keycloak:8080
+      - APP_URL=http://web_bkd:8000
+      - KEYCLOAK_REDIRECT_URL=http://web_bkd:8000/auth/callback
+      - KEYCLOAK_CLIENT_ID=test_client_bkd
+      #- KEYCLOAK_REDIRECT_URL=
+
+  web_diknas:
+    build:
+      context: .
+    ports:
+      - 8001:8001
+    volumes:
+      - .:/app
+    env_file:
+      - .env_base
+    environment:
+      - LARAVEL_SERVE_PORT=8001
+      - APP_NAME="Aplikasi Diknas"
+      - STYLE_COLOR=blue
+      - KEYCLOAK_BASE_URL=http://keycloak:8080
+      - APP_URL=http://web_diknas:8001
+      - KEYCLOAK_REDIRECT_URL=http://web_diknas:8001/auth/callback
+      - KEYCLOAK_CLIENT_ID=test_client_diknas
 
