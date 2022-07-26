@@ -35,6 +35,21 @@ Implementasi inti terkait Single Sign-On dan Single Sign-Off ada di controller `
 - `logout()` : metode yang dipanggil ketika user ingin melakukan logout dari web yang saat ini digunakan. metode ini akan meredirect user ke web SSO, yang kemudian akan melogout semua sesi di browser tersebut dan mengirimkan 'Backchannel Logout Request'
 - `logoutWebhook()` : metode yang dipanggil ketika web menerima 'Backchannel Logout Request'. Server akan memeriksa nilai session id yang dikirimkan oleh server SSO, dan menghapus semua session yang terkait dengan session tersebut sehingga user pun ter-logout.
 
+## notes terkait setup keycloak
+- untuk setiap aplikasi yang akan menggunakan fitur Single Sign-On & Single Sign-Out, perlu melakukan pembuatan client id & setting agar bisa terintegrasi dengan SSO Keycloak. Beberapa setting penting:
+    - set redirect url yang diizinkan
+    - set backchannel logout url
+    - set attribute mapper
+- untuk mempermudah setup keycloak di local, sudah disiapkan script untuk konfig keycloak dengan data dummy di `./keycloak-autosetup-script.sh`. Untuk menjalankannya di container yang ada di docker-compose repo ini, bisa dengan command:
+        ```
+        docker compose exec keycloak sh /app/keycloak-autosetup-script.sh
+        ```
+- script di sudah include juga pembuatan user dummy dengan login:
+    ```
+    username: testuser
+    password: testpassword
+    ```
+
 ## Notes terkait backchannel logout
 - jangan lupa di update juga setting client untuk url backchannel logout agar fungsi Single Sign-Out bisa berjalan
 - ~per 25 Juli 2022, untuk fitur backchannel logout baru bisa untuk fitur logout dari web console Keycloak, adapun untuk trigger backchannel logout dari fitur logout reguler dari sisi client belum berhasil. masih perlu di cek lebih dalam~
@@ -42,7 +57,10 @@ Implementasi inti terkait Single Sign-On dan Single Sign-Off ada di controller `
 
 ## Notes terkait host & url untuk setting integrasi
 - untuk integrasi OIDC diperlukan interaksi antara server keycloak maupun web client, dan interaksi ini terjadi tidak hanya di sisi client/via user agent, tapi juga di sisi host-to-host/via backchannel. Sementara berhubung umumnya settingannya di deploy via docker, ini akan **ada kendala ketika url integrasi yang digunakan adalah localhost** karena akan ketika dari dalam container memanggil ke localhost, by default dia tidak akan bisa menghubungi container di luar. karena itu ada beberapa solusi:
-    - container sebaiknya dihubungkan dulu ke luar via service seperti Ngrok atau localhost.run, nantinya untuk url hubungan keycloak-laravel menggunakan url public dari service-service di atas:
+    - ganti url localhost dengan ip addres static dari host. beberapa ip address yang bisa dicoba:
+        - 172.17.0.1 -> untuk di linux
+        - cek ip di command `ifconfig` atau `ip addr`
+    - container dihubungkan dulu ke luar via service seperti Ngrok atau localhost.run, nantinya untuk url hubungan keycloak-laravel menggunakan url public dari service-service di atas:
     - edit file /etc/hosts dan menambahkan alias dari localhost ke nama container. contoh:
 
     ```
