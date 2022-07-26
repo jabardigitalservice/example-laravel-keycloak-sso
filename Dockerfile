@@ -13,7 +13,8 @@ WORKDIR /app
 # Install PHP extensions
 #RUN install-php-extensions ldap
 
+# ini gak bisa dibuat copy composer aja karena di composer install ada tahap eksekusi artisan. kalau di copy hanya file composer, file artisannnya tidak ada dan jadinya composer installnya gagal
 COPY .  /app
 RUN composer install && composer dump-autoload
 
-CMD [ "php", "/app/artisan", "serve", "--host", "0.0.0.0" ]
+CMD [ "./start.sh" ]

@@ -31,3 +31,11 @@ Contoh aplikasi Laravel sederhana untuk demo integrasi dengan SSO Keycloak
   # in other terminal
   APP_NAME="Aplikasi Kota Bogor" STYLE_COLOR=blue KEYCLOAK_CLIENT=client_bogor php artisan serve --port 8002
   ```
+
+## Notes terkait backchannel logout
+- jangan lupa di update juga setting client untuk url backchannel logout agar fungsi Single Sign-Out bisa berjalan
+- per 25 Juli 2022, untuk fitur backchannel logout baru bisa untuk fitur logout dari web console Keycloak, adapun untuk trigger backchannel logout dari fitur logout reguler dari sisi client belum berhasil. masih perlu di cek lebih dalam
+
+## Notes terkait host & url untuk setting integrasi
+- untuk integrasi OIDC diperlukan interaksi antara server keycloak maupun web client, dan interaksi ini terjadi tidak hanya di sisi client/via user agent, tapi juga di sisi host-to-host/via backchannel. Sementara berhubung umumnya settingannya di deploy via docker, ini akan **ada kendala ketika url integrasi yang digunakan adalah localhost** karena akan ketika dari dalam container memanggil ke localhost, by default dia tidak akan bisa menghubungi container di luar. karena itu ada beberapa solusi:
+    - container sebaiknya dihubungkan dulu ke luar via service seperti Ngrok atau localhost.run, nantinya untuk url hubungan keycloak-laravel menggunakan url public dari service-service di atas:
