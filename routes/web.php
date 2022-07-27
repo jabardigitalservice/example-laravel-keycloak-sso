@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (env('IS_SIAP',false))
+        return view('landingpage_siap');
+    else
+        return view('welcome');
 })->name('home');
 
 Route::controller(App\Http\Controllers\OAuthController::class)
