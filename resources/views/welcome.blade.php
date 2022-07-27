@@ -14,6 +14,7 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
 <head>
     <meta charset="UTF-8">
     <title>{{ config('app.name') }} | Example Laravel-Keycloak SSO Integration</title>
+    <link rel="icon" href="https://dummyimage.com/70/{{ substr($style_color,1) }}/000&text={{ config('app.name') }}">
 
      <!-- Pico.css (Classless version) -->
     <link rel="stylesheet" href="{{ asset('pico.classless.min.css') }}">

@@ -47,6 +47,6 @@ services:
     environment:
       - IS_SIAP=true
       - LARAVEL_SERVE_PORT=8010
-      - APP_URL=http://172.17.0.1:8001
+      - APP_URL=http://172.17.0.1:8010
       - KEYCLOAK_CLIENT_ID=test_client_siap
 
