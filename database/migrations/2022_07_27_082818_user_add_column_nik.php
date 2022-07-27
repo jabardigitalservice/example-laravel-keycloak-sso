@@ -14,7 +14,7 @@ class UserAddColumnNik extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('nik', 20)->nullable();
+            $table->string('nik', 20)->unique()->nullable();
         });
     }
 
