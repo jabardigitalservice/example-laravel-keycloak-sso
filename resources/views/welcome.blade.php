@@ -42,7 +42,7 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
   </header>
   <main style="display:flex; gap:1rem; padding:1rem">
 
-    <article style="width:70%">
+    <article style="width:40%">
         @auth
         <strong>Selamat datang, {{ Auth::user()->name }}</strong>
         <p>
@@ -50,12 +50,6 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
                 Logout from all application in this session
             </button>
         </p>
-        <h3>Details:</h3>
-        <pre>
-            {{ print_r(Auth::user()->toArray()) }}
-
-            NIK dari keycloak: {{ session('nik') }}
-        </pre>
         @else
         <strong>Anda belum login. Silahkan login terlebih dahulu</strong>
         <p>
@@ -64,15 +58,52 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
             </button>
         </p>
         @endauth
-    </article>
 
-    <article style="width:40%">
         <p>
             <label for="">Laravel Session Id: </label> {{ \Session::getId() }}
         </p>
         <p>
             <label for="">Keycloak Session Id: </label> {{ session('KEYCLOAK_SESSION_ID') }}
         </p>
+    </article>
+
+    <article style="width:60%">
+        <h2>Detail terkait user saat ini:</h2>
+        @auth
+        <h3>
+            Info dari keycloak
+        </h3>
+        <pre>
+{{ print_r(Auth::user()->toArray()) }}
+
+NIK dari keycloak: {{ session('nik') }}
+        </pre>
+        <h3>
+            Data user yang sesuai dari database app ini
+        </h3>
+        <pre>
+        @php
+        $localUserData = \App\Models\User::where('nik', session('nik'))->first();
+        $localUserData = $localUserData ? $localUserData->toArray() : null;
+        echo print_r($localUserData) ;
+        @endphp
+{{}}
+        </pre>
+        <h3>
+            Data user yang sesuai dari API SIAP
+        </h3>
+        <pre>
+        @php
+        try {
+            $siapUrl = env('SIAP_BASE_URL') . '/get_user_detail?token=' . session('KEYCLOAK_LOGIN_DETAILS')['access_token'];
+            $siapData = file_get_contents($siapUrl);
+            echo print_r(json_decode($siapData));
+        } catch (Exception $e) {
+            echo print_r($e->getMessage());
+        }
+        @endphp
+        </pre>
+        @endif
     </article>
 
   </main>

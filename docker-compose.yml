@@ -46,6 +46,8 @@ services:
       - .env_base
     environment:
       - IS_SIAP=true
+      # list of admin NIKs, separated by commas
+      - ADMIN_NIK=123456789012
       - LARAVEL_SERVE_PORT=8010
       - APP_URL=http://172.17.0.1:8010
       - KEYCLOAK_CLIENT_ID=test_client_siap

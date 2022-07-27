@@ -30,8 +30,10 @@ Route::controller(App\Http\Controllers\OAuthController::class)
         Route::post('/logout_webhook', 'logoutWebhook')->name('logout_webhook');
     });
 
-Route::get('/get_user_detail', function($request) {
+use Illuminate\Http\Request;
+
+Route::get('/get_user_detail', function(Request $request) {
     $decodedAccessToken = parseJWTToken($request->token);
 
-    return App\Models\User::where('nik', $decodedAccessToken->nik)->first();
+    return response()->json(App\Models\User::where('nik', $decodedAccessToken->nik)->first());
 });
