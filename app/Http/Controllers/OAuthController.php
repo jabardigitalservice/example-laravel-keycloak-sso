@@ -44,6 +44,7 @@ class OAuthController extends Controller
         );
 
         // parse access token from keycloak using public key from Keycloak's JWK endpoint
+        // parseJWTToken method is defined in app\Helpers.php
         $decodedAccessToken = parseJWTToken($keycloakUser->accessTokenResponseBody['access_token']);
         session(['nik' => $decodedAccessToken->nik ?? '-' ]);;
 
