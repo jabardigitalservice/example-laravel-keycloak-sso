@@ -38,7 +38,7 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
             </header>
             <aside style="width:40%">
                 @auth
-                <strong>Selamat datang, {{ Auth::user()->name }}</strong>
+                <h2>Selamat datang, {{ Auth::user()->name }}</h2>
                 <p>
                     <button onclick="window.location='{{ route('oauth.logout') }}'">
                         Logout from all application in this session
@@ -46,9 +46,10 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
                 </p>
                 <h3>Details:</h3>
                 <pre>
-                    {{ print_r(Auth::user()->toArray()) }}
+{{ print_r(Auth::user()->toArray()) }}
 
-                    NIK dari keycloak: {{ session('nik') }}
+NIK dari keycloak: {{ session('nik') }}
+Status User: {{ isAdmin(session('nik')) ? 'ADMIN' : 'BUKAN ADMIN' }}
                 </pre>
                 @else
                 <strong>Anda belum login. Silahkan login terlebih dahulu</strong>

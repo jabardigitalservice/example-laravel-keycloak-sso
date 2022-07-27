@@ -20,9 +20,7 @@ function parseJWTToken($token) {
 // ini. Ini adalah contoh sebagai gambaran bagaimana mekanisme otorisasi di
 // lingkup aplikasi yang sudah terintegrasi dengan SSO
 function isAdmin($nik) {
-    $decoded = parseJWTToken($token);
-
     $admin_niks = explode(',', env('ADMIN_NIK'));
 
-    return in_array($decoded->nik, $admin_niks);
+    return in_array($nik, $admin_niks);
 }
