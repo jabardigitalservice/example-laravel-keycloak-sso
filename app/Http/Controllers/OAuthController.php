@@ -40,12 +40,12 @@ class OAuthController extends Controller
         session(['nik' => $decodedAccessToken->nik ?? '-' ]);;
 
         // Other option: upsert user into database
-        $user = User::where('nik',session('nik'))->first();
-        if (!$user)
-            $user = User::create([
-                'name' => $keycloakUser->name,
-                'email' => $keycloakUser->email,
-            ]);
+        $user = User::firstOrCreate([
+            'nik' => session('nik'),
+        ], [
+            'name' => $keycloakUser->name,
+            'email' => $keycloakUser->email,
+        ]);
 
         // log user from keycloak into current session
         Auth::login($user);
