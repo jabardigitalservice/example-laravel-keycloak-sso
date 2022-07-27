@@ -16,7 +16,7 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
     <title>{{ config('app.name') }} | Example Laravel-Keycloak SSO Integration</title>
 
      <!-- Pico.css (Classless version) -->
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.classless.min.css">
+    <link rel="stylesheet" href="{{ asset('pico.classless.min.css') }}">
 
     <style>
 /* Orange Light scheme (Default) */

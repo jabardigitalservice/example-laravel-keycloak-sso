@@ -15,18 +15,13 @@ services:
       context: .
     ports:
       - 8000:8000
-    env_file:
-      - .env_base
     volumes:
       - .:/app
     environment:
       - APP_NAME="Aplikasi BKD"
       - STYLE_COLOR=purple
-      - KEYCLOAK_BASE_URL=http://localhost:8080
-      - APP_URL=http://localhost:8000
-      - KEYCLOAK_REDIRECT_URL=http://localhost:8000/auth/callback
+      - APP_URL=http://172.17.0.1:8000
       - KEYCLOAK_CLIENT_ID=test_client_bkd
-      #- KEYCLOAK_REDIRECT_URL=
 
   web_diknas:
     build:
@@ -35,14 +30,10 @@ services:
       - 8001:8001
     volumes:
       - .:/app
-    env_file:
-      - .env_base
     environment:
       - LARAVEL_SERVE_PORT=8001
       - APP_NAME="Aplikasi Diknas"
       - STYLE_COLOR=blue
-      - KEYCLOAK_BASE_URL=http://localhost:8080
-      - APP_URL=http://localhost:8001
-      - KEYCLOAK_REDIRECT_URL=http://localhost:8001/auth/callback
+      - APP_URL=http://172.17.0.1:8001
       - KEYCLOAK_CLIENT_ID=test_client_diknas
 
