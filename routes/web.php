@@ -29,3 +29,9 @@ Route::controller(App\Http\Controllers\OAuthController::class)
         Route::get('/logout', 'logout')->name('logout');
         Route::post('/logout_webhook', 'logoutWebhook')->name('logout_webhook');
     });
+
+Route::get('/get_user_detail', function($request) {
+    $decodedAccessToken = parseJWTToken($request->token);
+
+    return App\Models\User::where('nik', $decodedAccessToken->nik)->first();
+});
