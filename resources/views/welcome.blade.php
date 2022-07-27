@@ -74,9 +74,8 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
             Info dari keycloak
         </h3>
         <pre>
-{{ print_r(Auth::user()->toArray()) }}
+{{ print_r(session('KEYCLOAK_USER_DATA')) }}
 
-NIK dari keycloak: {{ session('nik') }}
         </pre>
         <h3>
             Data user yang sesuai dari database app ini

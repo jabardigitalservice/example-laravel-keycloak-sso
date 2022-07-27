@@ -31,22 +31,21 @@ class OAuthController extends Controller
 
         session([
             'KEYCLOAK_LOGIN_DETAILS' => $keycloakUser->accessTokenResponseBody,
+            'KEYCLOAK_USER_DATA' => $keycloakUser->user,
         ]);
-
-        // upsert user into database
-        $user = User::updateOrCreate(
-            [
-                'email' => $keycloakUser->email,
-            ],
-            [
-                'name' => $keycloakUser->name,
-            ],
-        );
 
         // parse access token from keycloak using public key from Keycloak's JWK endpoint
         // parseJWTToken method is defined in app\Helpers.php
         $decodedAccessToken = parseJWTToken($keycloakUser->accessTokenResponseBody['access_token']);
         session(['nik' => $decodedAccessToken->nik ?? '-' ]);;
+
+        // Other option: upsert user into database
+        $user = User::where('nik',session('nik'))->first();
+        if (!$user)
+            $user = User::create([
+                'name' => $keycloakUser->name,
+                'email' => $keycloakUser->email,
+            ]);
 
         // log user from keycloak into current session
         Auth::login($user);
