@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (env('IS_SIAP',false))
-        return view('landingpage_siap');
+        return view('siap.landingpage');
     else
         return view('welcome');
 })->name('home');
