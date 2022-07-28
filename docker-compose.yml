@@ -15,8 +15,8 @@ services:
       context: .
     ports:
       - 8000:8000
-    volumes:
-      - .:/app
+    env_file:
+      - .env_base
     environment:
       - APP_NAME="Aplikasi BKD"
       - STYLE_COLOR=purple
@@ -28,12 +28,27 @@ services:
       context: .
     ports:
       - 8001:8001
-    volumes:
-      - .:/app
+    env_file:
+      - .env_base
     environment:
       - LARAVEL_SERVE_PORT=8001
       - APP_NAME="Aplikasi Diknas"
       - STYLE_COLOR=blue
       - APP_URL=http://172.17.0.1:8001
       - KEYCLOAK_CLIENT_ID=test_client_diknas
+
+  web_siap:
+    build:
+      context: .
+    ports:
+      - 8010:8010
+    env_file:
+      - .env_base
+    environment:
+      - IS_SIAP=true
+      # list of admin NIKs, separated by commas
+      - ADMIN_NIK=123456789012
+      - LARAVEL_SERVE_PORT=8010
+      - APP_URL=http://172.17.0.1:8010
+      - KEYCLOAK_CLIENT_ID=test_client_siap
 

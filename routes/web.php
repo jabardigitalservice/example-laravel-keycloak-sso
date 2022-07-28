@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (env('IS_SIAP',false))
+        return view('landingpage_siap');
+    else
+        return view('welcome');
 })->name('home');
 
 Route::controller(App\Http\Controllers\OAuthController::class)
@@ -26,3 +29,18 @@ Route::controller(App\Http\Controllers\OAuthController::class)
         Route::get('/logout', 'logout')->name('logout');
         Route::post('/logout_webhook', 'logoutWebhook')->name('logout_webhook');
     });
+
+use Illuminate\Http\Request;
+
+// metode yang digunakan di website SIAP untuk memberikan data user login
+// yang sesuai dari SIAP
+if (env('IS_SIAP',false)) {
+    Route::get('/get_user_detail', function(Request $request) {
+        $decodedAccessToken = parseJWTToken($request->token);
+
+        return response()->json(
+            App\Models\User::where('nik', $decodedAccessToken->nik)
+                            ->first()
+            );
+    });
+}

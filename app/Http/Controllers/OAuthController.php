@@ -13,8 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use Laravel\Socialite\Facades\Socialite;
-use Firebase\JWT\JWK;
-use Firebase\JWT\JWT;
 
 class OAuthController extends Controller
 {
@@ -32,28 +30,29 @@ class OAuthController extends Controller
         $keycloakUser = Socialite::driver('keycloak')->user();
 
         session([
-            'KEYCLOAK_SESSION_ID' => $keycloakUser->accessTokenResponseBody['session_state'],
+            'KEYCLOAK_LOGIN_DETAILS' => $keycloakUser->accessTokenResponseBody,
+            'KEYCLOAK_USER_DATA' => $keycloakUser->user,
         ]);
 
-        // upsert user into database
-        $user = User::updateOrCreate(
-            [
-                'email' => $keycloakUser->email,
-            ],
-            [
-                'name' => $keycloakUser->name,
-            ],
-        );
-
         // parse access token from keycloak using public key from Keycloak's JWK endpoint
-        $decodedAccessToken = $this->parseJWTToken($keycloakUser->accessTokenResponseBody['access_token']);
+        // parseJWTToken method is defined in app\Helpers.php
+        $decodedAccessToken = parseJWTToken($keycloakUser->accessTokenResponseBody['access_token']);
         session(['nik' => $decodedAccessToken->nik ?? '-' ]);;
+
+        // Kalau data sudah ada di database, ambil data. kalau tidak ada, buat baru
+        $user = User::firstOrCreate([
+            'nik' => session('nik'),
+        ], [
+            'name' => $keycloakUser->name,
+            'email' => $keycloakUser->email,
+        ]);
 
         // log user from keycloak into current session
         Auth::login($user);
 
         // map Keycloak's session_id with Laravel's session_id
-        $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . session('KEYCLOAK_SESSION_ID');
+        $keycloakSessionId = $keycloakUser->accessTokenResponseBody['session_state'];
+        $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $keycloakSessionId;
         \Cache::put($cacheKey, \Session::getId() );
         info("Map id $cacheKey with session " . \Cache::get($cacheKey));
 
@@ -82,7 +81,14 @@ class OAuthController extends Controller
         info('logout webhook request received');
 
         // parse logout token from keycloak using public key from Keycloak's JWK endpoint
-        $decoded = $this->parseJWTToken($logoutToken);
+        $decoded = parseJWTToken($logoutToken);
+
+        /*
+         * Setelah di decode, seharusnya JWT token ini di validasi sesuai
+         * standar yang di dokumentasikan di https://openid.net/specs/openid-connect-backchannel-1_0.html#Validation .
+         *
+         * Namun untuk mempersingkat, di fungsi ini validasi di atas tidak di implementasikan
+         */
 
         $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $decoded->sid;
         $laravelSessionId = \Cache::get($cacheKey);
@@ -94,13 +100,6 @@ class OAuthController extends Controller
         return response('ok');
     }
 
-    public function parseJWTToken($token)
-    {
-        // parse JWT token from keycloak using public key from Keycloak's JWK endpoint
-        $jwks_response = file_get_contents(env('KEYCLOAK_BASE_URL') . '/realms/' . env('KEYCLOAK_REALM') . '/protocol/openid-connect/certs');
-        $jwks = json_decode($jwks_response, true);
-        return JWT::decode($token, JWK::parseKeySet($jwks));
-    }
 }
 
 
