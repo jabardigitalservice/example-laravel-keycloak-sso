@@ -8,13 +8,29 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            if (!isAdmin($request->user()))
+                abort(401);
+
+            return $next($request);
+        });
+    }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $users = User::paginate(15);
+        return view('users.index', compact('users'));
     }
 
     /**
@@ -24,7 +40,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $user = new User();
+        return view('users._form', compact('user'));
     }
 
     /**
@@ -35,7 +52,16 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = User::create($request->all());
+
+        if (!$user)
+            abort('500');
+        else
+            $request->session()->flash('status', "Creating user successful!");
+
+        // create new user on keycloak
+
+        return redirect()->route('users.edit', $user);
     }
 
     /**
@@ -57,7 +83,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('users._form', compact('user'));
     }
 
     /**
@@ -69,7 +95,11 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        if ($user->update($request->all())) {
+            $request->session()->flash('status', "Updating user $user->name successful!");
+        }
+
+        return redirect()->route('users.edit', $user);
     }
 
     /**
@@ -80,6 +110,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        // remove user from keycloak
+
+        return $user->delete();
     }
 }

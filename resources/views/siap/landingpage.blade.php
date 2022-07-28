@@ -14,7 +14,7 @@
 {{ print_r(Auth::user()->toArray()) }}
 
 NIK dari keycloak: {{ session('nik') }}
-Status User: {{ isAdmin(session('nik')) ? 'ADMIN' : 'BUKAN ADMIN' }}
+Status User: {{ isAdmin(Auth::user()) ? 'ADMIN' : 'BUKAN ADMIN' }}
     </pre>
     @else
     <strong>Anda belum login. Silahkan login terlebih dahulu</strong>

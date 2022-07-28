@@ -19,10 +19,8 @@ function parseJWTToken($token) {
 // Fungsi untuk memeriksa apakah NIK yang diinput  adalah admin di web
 // ini. Ini adalah contoh sebagai gambaran bagaimana mekanisme otorisasi di
 // lingkup aplikasi yang sudah terintegrasi dengan SSO
-function isAdmin($nik) {
-    $admin_niks = explode(',', env('ADMIN_NIK'));
-
-    return in_array($nik, $admin_niks);
+function isAdmin($user) {
+    return in_array($user->role, [ 'admin', 'superadmin' ]);
 }
 
 // ini adalah fungsi yang bisa digunakan oleh aplikasi/website pemerintah untuk

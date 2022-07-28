@@ -15,6 +15,7 @@ class UserAddColumnNik extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('nik', 20)->unique()->nullable();
+            $table->string('role', 20)->nullable();
         });
     }
 
@@ -26,7 +27,10 @@ class UserAddColumnNik extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('nik');
+            $table->dropColumns([
+                'nik',
+                'role',
+            ]);
         });
     }
 }

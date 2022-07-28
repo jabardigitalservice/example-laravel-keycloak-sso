@@ -39,6 +39,14 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
             <ul>
                 @auth
                 <li>Halo, {{ Auth::user()->name }}</li>
+
+                    @if (isAdmin(Auth::user()))
+                    <li>
+                        <a href="{{ route('users.index') }}">
+                            Manage Users
+                        </a>
+                    </li>
+                    @endif
                 <li>
                     <a href="{{ route('oauth.logout') }}">
                         Logout from this session
