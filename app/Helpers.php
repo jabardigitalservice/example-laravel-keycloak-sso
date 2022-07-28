@@ -24,3 +24,17 @@ function isAdmin($nik) {
 
     return in_array($nik, $admin_niks);
 }
+
+// ini adalah fungsi yang bisa digunakan oleh aplikasi/website pemerintah untuk
+// mendapatkan data profil user dari SIAP berdasarkan nik user yang login
+// melalui sistem SSO.
+function getCurrentUserProfileFromSIAP() {
+    try {
+        $accessToken = session('KEYCLOAK_LOGIN_DETAILS')['access_token'];
+        $siapUrl = env('SIAP_BASE_URL') . '/get_user_detail?token=' . $accessToken;
+        $siapData = file_get_contents($siapUrl);
+        return json_decode($siapData);
+    } catch (Exception $e) {
+        return $e->getMessage();
+    }
+}

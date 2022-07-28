@@ -32,8 +32,15 @@ Route::controller(App\Http\Controllers\OAuthController::class)
 
 use Illuminate\Http\Request;
 
-Route::get('/get_user_detail', function(Request $request) {
-    $decodedAccessToken = parseJWTToken($request->token);
+// metode yang digunakan di website SIAP untuk memberikan data user login
+// yang sesuai dari SIAP
+if (env('IS_SIAP',false)) {
+    Route::get('/get_user_detail', function(Request $request) {
+        $decodedAccessToken = parseJWTToken($request->token);
 
-    return response()->json(App\Models\User::where('nik', $decodedAccessToken->nik)->first());
-});
+        return response()->json(
+            App\Models\User::where('nik', $decodedAccessToken->nik)
+                            ->first()
+            );
+    });
+}

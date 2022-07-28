@@ -39,7 +39,7 @@ class OAuthController extends Controller
         $decodedAccessToken = parseJWTToken($keycloakUser->accessTokenResponseBody['access_token']);
         session(['nik' => $decodedAccessToken->nik ?? '-' ]);;
 
-        // Other option: upsert user into database
+        // Kalau data sudah ada di database, ambil data. kalau tidak ada, buat baru
         $user = User::firstOrCreate([
             'nik' => session('nik'),
         ], [
@@ -82,6 +82,13 @@ class OAuthController extends Controller
 
         // parse logout token from keycloak using public key from Keycloak's JWK endpoint
         $decoded = parseJWTToken($logoutToken);
+
+        /*
+         * Setelah di decode, seharusnya JWT token ini di validasi sesuai
+         * standar yang di dokumentasikan di https://openid.net/specs/openid-connect-backchannel-1_0.html#Validation .
+         *
+         * Namun untuk mempersingkat, di fungsi ini validasi di atas tidak di implementasikan
+         */
 
         $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $decoded->sid;
         $laravelSessionId = \Cache::get($cacheKey);
