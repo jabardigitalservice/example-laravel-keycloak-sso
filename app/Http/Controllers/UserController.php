@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
+
+use App\Models\User;
+use App\Services\KeycloakAdmin;
 
 class UserController extends Controller
 {
@@ -60,6 +62,25 @@ class UserController extends Controller
             $request->session()->flash('status', "Creating user successful!");
 
         // create new user on keycloak
+        try {
+            KeycloakAdmin::getClient()->createUser([
+                'username' => $user->name,
+                'email' => $user->email,
+                'enabled' => true,
+                'emailVerified' => true,
+                'credentials' => [
+                    [
+                        'type'=>'password',
+                        'value'=> $request->password,
+                    ],
+                ],
+                'attributes' => [
+                    'nik' => $user->nik,
+                ],
+            ]);
+        } catch (Exception $e) {
+            $request->session()->flash('status', "Error when creating Keycloak User: {$e->getMessage()}");
+        }
 
         return redirect()->route('users.edit', $user);
     }

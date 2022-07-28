@@ -23,9 +23,6 @@
                   }}"
     >
         @csrf
-        @if ($user->name)
-        @method('patch')
-        @endif
 
         @foreach ([ 'name', 'email', 'nik', 'role' ] as $attr_name)
         <label for="input-{{ $attr_name }}">{{ $attr_name }}</label>
@@ -35,6 +32,29 @@
                value="{{ old($attr_name, $user[$attr_name]) }}"
         />
         @endforeach
+
+        @if ($user->name)
+        @method('patch')
+        @else
+        <label for="input-password">Password</label>
+        <input type="password"
+               id="input-password"
+               name="password"
+        />
+        <button type="button" onclick="toggleShowPassword()">
+            show password
+        </button>
+
+        <script>
+        function toggleShowPassword() {
+            var password_input = document.querySelector('#input-password');
+
+            password_input.type = (password_input.type == 'text') ?
+                                  'password' :
+                                  'text' ;
+        }
+        </script>
+        @endif
 
         <button type="submit">
             Submit

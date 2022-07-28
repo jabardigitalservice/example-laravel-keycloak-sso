@@ -13,6 +13,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/socialite": "^5.5",
         "laravel/tinker": "^2.5",
+        "mohammad-waleed/keycloak-admin-client": "^0.31.0",
         "socialiteproviders/keycloak": "^5.1"
     },
     "require-dev": {

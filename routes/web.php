@@ -20,6 +20,8 @@ Route::get('/', function () {
         return view('welcome');
 })->name('home');
 
+Route::redirect('/login', '/')->name('login');
+
 Route::controller(App\Http\Controllers\OAuthController::class)
     ->prefix('/auth')
     ->name('oauth.')

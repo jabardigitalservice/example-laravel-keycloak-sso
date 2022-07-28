@@ -43,8 +43,8 @@ class OAuthController extends Controller
         $user = User::firstOrCreate([
             'nik' => session('nik'),
         ], [
-            'name' => $keycloakUser->name,
-            'email' => $keycloakUser->email,
+            'name' => $keycloakUser->getName(),
+            'email' => $keycloakUser->getEmail(),
         ]);
 
         // log user from keycloak into current session
