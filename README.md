@@ -3,7 +3,11 @@ Aplikasi Demo Integrasi SSO Keycloak-Laravel
 
 Repo ini berisi kode website yang dirancang sebagai demo integrasi aplikasi pemerintahan dengan sistem SSO berbasis Keycloak. Repo ini juga ditujukan sebagai referensi implementasi fitur2 SSO bagi para developer aplikasi/website di lingkungan pemerintahan jawa barat.
 
-![Screenshot](/screenshot.png?raw=true "Screenshot of example demo site")
+## Screenshots
+Aplikasi/Website Pemprov
+![Screenshot Service Provider](/screenshot.png?raw=true "Screenshot of example demo site")
+Aplikasi/Website Simulasi SIAP
+![Screenshot Simulasi SIAP](/screenshot_siap.png?raw=true "Screenshot of SIAP website simulation")
 
 ## Fitur
 Repositori ini berisi beberapa bagian:
@@ -17,8 +21,9 @@ Repositori ini berisi beberapa bagian:
     - Display data user
     - Custom styling untuk mempermudah proses demo
 - kemudian fitur yang ada di website simulasi SIAP antara lain:
-    - autentikasi dengan JWT token dari keycloak
+    - login ke SIAP dengan SSO
     - endpoint publik:
+        - autentikasi dengan JWT token dari keycloak
         - ada endpoint untuk get data pegawai by NIK yang ada di JWT token
         - fitur lupa password/reset password
     - halaman edit profil untuk user sendiri:
