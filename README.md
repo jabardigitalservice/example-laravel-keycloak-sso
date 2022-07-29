@@ -112,3 +112,4 @@ Selain itu di `App\Helpers.php` ada fungsi-fungsi penting:
     entry di atas tujuannya agar setiap container bisa diakses menggunakan nama containernya, baik dari host maupun dari jaringan internal docker
     - container dihubungkan dulu ke luar via service seperti Ngrok atau localhost.run, nantinya untuk url hubungan keycloak-laravel menggunakan url public dari service-service di atas:
 
+
