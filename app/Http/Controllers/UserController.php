@@ -165,4 +165,45 @@ class UserController extends Controller
 
         return $user->delete();
     }
+
+    public function resetPassword(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $user = $request->user();
+
+            info("Resetting password for user with NIK $user->nik");
+
+            // find matching Keycloak User by NIK
+            $keycloakUser = KeycloakAdmin::getClient()->getUsers([
+                'q' => 'nik:' . $user->nik,
+            ]);
+
+            if (empty($keycloakUser)) {
+                info('No keycloak user found for NIK ' . $user->nik);
+                abort(500, 'No keycloak user found for NIK ' . $user->nik);
+            }
+
+            $keycloakUserId = $keycloakUser[0]['id'];
+
+            info("Found matching user in Keycloak with id $keycloakUserId");
+
+            // actual keycloak password reset
+            $result = KeycloakAdmin::getClient()->resetUserPassword([
+                'id' => $keycloakUserId,
+
+                // credential representation object
+                // references:
+                // - https://stackoverflow.com/a/35014705
+                // - https://www.keycloak.org/docs-api/12.0/rest-api/index.html#_resetpassword
+                'type' => 'password',
+                'temporary' => false,
+                'value' => $request->password,
+            ]);
+
+            if ($result)
+                $request->session()->flash('status', "Password change successful!");
+        }
+
+        return view('users.reset_password');
+    }
 }
