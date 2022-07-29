@@ -82,6 +82,15 @@ Selain itu di `App\Helpers.php` ada fungsi-fungsi penting:
     username: testuser
     password: testpassword
     ```
+- Khusus untuk integrasi SIAP ke Keycloak, dibutuhkan client Keycloak khusus dengan tipe **service account**. Petunjuk setting nya bisa dilihat di https://www.keycloak.org/docs/latest/server_admin/index.html#_service_accounts
+    - Selain itu untuk manajemen user, client tersebut perlu disetting juga role nya. menu settingnya ada di web admin keycloak:
+        - di sidebar masuk ke Clients
+        - pilih client yang sesuai
+        - masuk ke tab "Service Account Roles"
+        - di dropdown "Client Roles" pilih  "realm management"
+        - pastikan "manage-users" ada di daftar "Assigned Roles"
+
+![Screenshot Setting Keycloak Client untuk SIAP](/screenshot_settings_client_siap.png?raw=true "Screenshot Setting Keycloak Client untuk SIAP")
 
 ## Notes terkait backchannel logout
 - jangan lupa di update juga setting client untuk url backchannel logout agar fungsi Single Sign-Out bisa berjalan
