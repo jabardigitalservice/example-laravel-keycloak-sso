@@ -131,7 +131,37 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        info("Removing user with NIK $user->nik");
+
+        // find matching Keycloak User by NIK
+        $keycloakUser = KeycloakAdmin::getClient()->getUsers([
+            'q' => 'nik:' . $user->nik,
+        ]);
+
+        if (empty($keycloakUser)) {
+            info('No keycloak user found for NIK ' . $user->nik);
+            abort(500, 'No keycloak user found for NIK ' . $user->nik);
+        }
+
+        $keycloakUserId = $keycloakUser[0]['id'];
+
+        info("Found matching user in Keycloak with id $keycloakUserId");
+
+        // di sini idealnya juga dilakukan proses logout semua session aktif
+        // untuk user ini di semua aplikasi. Di contoh ini dilewatkan untuk
+        // mempersingkat kode.
+
         // remove user from keycloak
+        $result = KeycloakAdmin::getClient()->deleteUser([
+            'id' => $keycloakUserId,
+        ]);
+
+        if (empty($result)) {
+            info("Failed removing user $keycloakUserId from Keycloak");
+            abort(500, 'Failed removing user from Keycloak');
+        }
+
+        info('Remove succeed');
 
         return $user->delete();
     }

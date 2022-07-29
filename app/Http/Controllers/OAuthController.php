@@ -27,6 +27,8 @@ class OAuthController extends Controller
 
     public function callback()
     {
+        info('Processing authenticated SSO Login request');
+
         $keycloakUser = Socialite::driver('keycloak')->user();
 
         session([
@@ -43,14 +45,32 @@ class OAuthController extends Controller
         $user = User::firstOrCreate([
             'nik' => session('nik'),
         ], [
-            'name' => $keycloakUser->getName(),
-            'email' => $keycloakUser->getEmail(),
+            'name' => $keycloakUser->user['preferred_username'],
+            'email' => $keycloakUser->user['email'],
         ]);
+
+        // selain memeriksa data yang ada di database local, idealnya juga
+        // dilakukan sync dengan data pegawai terpusat yang ada di SIAP. Di sini
+        // sengaja fungsi ini tidak diaktifkan agar dapat dibandingkan data yang
+        // ada di database local yang sudah ada vs data yang didapatkan dari
+        // database SIAP
+        /*
+        $SIAPUserProfile = getCurrentUserProfileFromSIAP();
+        if ($SIAPUserProfile) {
+            $user->update([
+                'name' => $SIAPUserProfile['name'],
+                'email' => $SIAPUserProfile['email'],
+                'role' => $SIAPUserProfile['role'],
+            ]);
+        }
+        */
 
         // log user from keycloak into current session
         Auth::login($user);
 
-        // map Keycloak's session_id with Laravel's session_id
+        // maping session_id dari Keycloak dengan session_id dari Laravel. Ini
+        // akan diperlukan nantinya untuk proses "backchannel logout". Lihat
+        // lebih lanjut di fungsi `logoutWebhook()` di bawah
         $keycloakSessionId = $keycloakUser->accessTokenResponseBody['session_state'];
         $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $keycloakSessionId;
         \Cache::put($cacheKey, \Session::getId() );
@@ -87,7 +107,8 @@ class OAuthController extends Controller
          * Setelah di decode, seharusnya JWT token ini di validasi sesuai
          * standar yang di dokumentasikan di https://openid.net/specs/openid-connect-backchannel-1_0.html#Validation .
          *
-         * Namun untuk mempersingkat, di fungsi ini validasi di atas tidak di implementasikan
+         * Namun karena kode ini hanya contoh, untuk mempersingkat maka di
+         * fungsi ini validasi di atas tidak di implementasikan.
          */
 
         $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $decoded->sid;

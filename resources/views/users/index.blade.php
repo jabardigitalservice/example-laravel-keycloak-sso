@@ -41,7 +41,7 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     }
                 }).then(res => {
-                    if (res) {
+                    if (res.ok) {
                         alert('delete succeed');
                         window.location.reload();
                     } else {
