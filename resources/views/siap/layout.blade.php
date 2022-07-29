@@ -48,6 +48,11 @@ $style_color = $color_choices[ env('STYLE_COLOR', 'teal') ];
                     </li>
                     @endif
                 <li>
+                    <a href="{{ route('users.reset_password') }}">
+                        Reset password
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('oauth.logout') }}">
                         Logout from this session
                     </a>
