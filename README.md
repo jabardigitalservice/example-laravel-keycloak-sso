@@ -61,6 +61,13 @@ Implementasi inti terkait Single Sign-On dan Single Sign-Off ada di controller `
 Selain itu di `App\Helpers.php` ada fungsi-fungsi penting:
 - `parseJWTToken()` : untuk memparsing token JWT yang masuk menggunakan public key dari endpoint JWK bawaan Keycloak
 
+## Penjelasan terkait fungsionalitas integrasi SSO-SIAP
+- file `App\Helpers.php`, berisi beberapa fungsi penting:
+    - `parseJWTToken($token)` :
+    - `isAdmin($token)` :
+    - `getCurrentUserProfileFromSIAP($token)` :
+- file `App\Service\KeycloakAdmin.php` berisi class untuk interaksi dari SIAP ke Keycloak sebagai Admin Keycloak
+
 ## notes terkait setup keycloak
 - untuk setiap aplikasi yang akan menggunakan fitur Single Sign-On & Single Sign-Out, perlu melakukan pembuatan client id & setting agar bisa terintegrasi dengan SSO Keycloak. Beberapa setting penting:
     - set redirect url yang diizinkan

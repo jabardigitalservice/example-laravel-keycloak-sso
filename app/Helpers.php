@@ -19,10 +19,8 @@ function parseJWTToken($token) {
 // Fungsi untuk memeriksa apakah NIK yang diinput  adalah admin di web
 // ini. Ini adalah contoh sebagai gambaran bagaimana mekanisme otorisasi di
 // lingkup aplikasi yang sudah terintegrasi dengan SSO
-function isAdmin($nik) {
-    $admin_niks = explode(',', env('ADMIN_NIK'));
-
-    return in_array($nik, $admin_niks);
+function isAdmin($user) {
+    return in_array($user->role, [ 'admin', 'superadmin' ]);
 }
 
 // ini adalah fungsi yang bisa digunakan oleh aplikasi/website pemerintah untuk
@@ -33,7 +31,7 @@ function getCurrentUserProfileFromSIAP() {
         $accessToken = session('KEYCLOAK_LOGIN_DETAILS')['access_token'];
         $siapUrl = env('SIAP_BASE_URL') . '/get_user_detail?token=' . $accessToken;
         $siapData = file_get_contents($siapUrl);
-        return json_decode($siapData);
+        return json_decode($siapData, true);
     } catch (Exception $e) {
         return $e->getMessage();
     }

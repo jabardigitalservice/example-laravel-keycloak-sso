@@ -15,10 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (env('IS_SIAP',false))
-        return view('landingpage_siap');
+        return view('siap.landingpage');
     else
         return view('welcome');
 })->name('home');
+
+Route::redirect('/login', '/')->name('login');
 
 Route::controller(App\Http\Controllers\OAuthController::class)
     ->prefix('/auth')
@@ -43,4 +45,6 @@ if (env('IS_SIAP',false)) {
                             ->first()
             );
     });
+
+    Route::resource('users', App\Http\Controllers\UserController::class);
 }

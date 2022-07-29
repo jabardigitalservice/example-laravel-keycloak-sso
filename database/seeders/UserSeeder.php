@@ -17,14 +17,14 @@ class UserSeeder extends Seeder
     {
         // dummy values
         $niks = [
-            '123456789000',
-            '123456789010',
-            '123456789011',
-            '123456789012',
+            '123456789000' => null,
+            '123456789010' => 'member',
+            '123456789011' => 'admin',
+            '123456789012' => 'superadmin',
         ];
 
-        foreach ($niks as $nik) {
-            User::factory()->create(compact('nik'));
+        foreach ($niks as $nik => $role) {
+            User::factory()->create(compact('nik', 'role'));
         }
     }
 }
