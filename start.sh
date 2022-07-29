@@ -10,7 +10,7 @@ touch "/app/database/${SQLITE_DB_DATABASE}"
 
 # set default value for LARAVEL_SERVE_PORT
 # ref: https://stackoverflow.com/a/48829326
-LARAVEL_SERVE_PORT="${LARAVEL_SERVE_PORT:-8000}"
+LARAVEL_SERVE_PORT="${PORT:-8000}"
 
 #php -S 0.0.0.0:8000
 php artisan migrate:fresh --seed --force
