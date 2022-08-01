@@ -49,14 +49,7 @@ if (env('IS_SIAP',false)) {
     Route::match(['get', 'post'], '/reset_password', [ App\Http\Controllers\UserController::class, 'resetPassword' ])
          ->name('users.reset_password');
     Route::resource('users', App\Http\Controllers\UserController::class);
+} else {
+    Route::get('/mobile-api/me', [ App\Http\Controllers\MobileController::class, 'getCurrentUserData' ]);
 }
 
-Route::get('/mobile-api/me', function(Request $request) {
-    $token = $request->bearerToken();
-    $decodedToken = parseJWTToken($token);
-
-    $data_keycloak = getCurrentUserProfileFromSIAP($token);
-    $data_web = App\Models\User::where('nik', $decodedToken->nik)->first();
-
-    return response()->json(compact('data_keycloak', 'data_web'));
-});
