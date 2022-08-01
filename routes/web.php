@@ -50,3 +50,13 @@ if (env('IS_SIAP',false)) {
          ->name('users.reset_password');
     Route::resource('users', App\Http\Controllers\UserController::class);
 }
+
+Route::get('/mobile-api/me', function(Request $request) {
+    $token = $request->bearerToken();
+    $decodedToken = parseJWTToken($token);
+
+    $data_keycloak = getCurrentUserProfileFromSIAP($token);
+    $data_web = App\Models\User::where('nik', $decodedToken->nik)->first();
+
+    return response()->json(compact('data_keycloak', 'data_web'));
+});
