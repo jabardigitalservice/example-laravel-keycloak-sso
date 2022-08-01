@@ -15,24 +15,7 @@
     <form method="POST">
         @csrf
 
-        <label for="input-password">Password</label>
-        <input type="password"
-               id="input-password"
-               name="password"
-        />
-        <button type="button" onclick="toggleShowPassword()">
-            show password
-        </button>
-
-        <script>
-        function toggleShowPassword() {
-            var password_input = document.querySelector('#input-password');
-
-            password_input.type = (password_input.type == 'text') ?
-                                  'password' :
-                                  'text' ;
-        }
-        </script>
+        @include('users._password_field')
 
         <button type="submit">
             Submit
