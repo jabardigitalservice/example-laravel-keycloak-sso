@@ -49,4 +49,7 @@ if (env('IS_SIAP',false)) {
     Route::match(['get', 'post'], '/reset_password', [ App\Http\Controllers\UserController::class, 'resetPassword' ])
          ->name('users.reset_password');
     Route::resource('users', App\Http\Controllers\UserController::class);
+} else {
+    Route::get('/mobile-api/me', [ App\Http\Controllers\MobileController::class, 'getCurrentUserData' ]);
 }
+

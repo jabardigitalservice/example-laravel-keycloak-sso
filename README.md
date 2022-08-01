@@ -20,6 +20,7 @@ Repositori ini berisi beberapa bagian:
     - Single Sign-Out dengan backchannel logout flow
     - Display data user
     - Custom styling untuk mempermudah proses demo
+    - endpoint khusus `/mobile-api/me` yang mensimulasikan integrasi terhadap mobile app atau frontend. Endpoint ini akan menerima bearer token yang didapat dari keycloak, dan menggunakan NIK yang ada di dalamnya untuk mengambil data user yang bersesuaian dari SIAP serta dari database local aplikasi itu sendiri
 - kemudian fitur yang ada di website simulasi SIAP antara lain:
     - login ke SIAP dengan SSO
     - endpoint publik:

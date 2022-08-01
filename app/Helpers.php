@@ -3,6 +3,8 @@
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
 
+use App\Services\KeycloakAdmin;
+
 /*
  * Fungsi untuk memparsing token JWT yang masuk menggunakan public key dari endpoint JWK bawaan Keycloak
 
@@ -34,13 +36,33 @@ function getCurrentKeycloakSessionId() {
 // ini adalah fungsi yang bisa digunakan oleh aplikasi/website pemerintah untuk
 // mendapatkan data profil user dari SIAP berdasarkan nik user yang login
 // melalui sistem SSO.
-function getCurrentUserProfileFromSIAP() {
+function getCurrentUserProfileFromSIAP($token=null) {
+    $accessToken = !is_null($token) ?
+                   $token :
+                   session('KEYCLOAK_LOGIN_DETAILS')['access_token'] ;
     try {
-        $accessToken = session('KEYCLOAK_LOGIN_DETAILS')['access_token'];
         $siapUrl = env('SIAP_BASE_URL') . '/get_user_detail?token=' . $accessToken;
         $siapData = file_get_contents($siapUrl);
         return json_decode($siapData, true);
     } catch (Exception $e) {
         return $e->getMessage();
     }
+}
+
+function getKeycloakUserId($user) {
+    // find matching Keycloak User by NIK
+    $keycloakUser = KeycloakAdmin::getClient()->getUsers([
+        'q' => 'nik:' . $user->nik,
+    ]);
+
+    if (empty($keycloakUser)) {
+        info('No keycloak user found for NIK ' . $user->nik);
+        abort(500, 'No keycloak user found for NIK ' . $user->nik);
+    }
+
+    $keycloakUserId = $keycloakUser[0]['id'];
+
+    info("Found matching user in Keycloak with id $keycloakUserId");
+
+    return $keycloakUserId;
 }
