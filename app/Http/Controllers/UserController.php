@@ -133,19 +133,7 @@ class UserController extends Controller
     {
         info("Removing user with NIK $user->nik");
 
-        // find matching Keycloak User by NIK
-        $keycloakUser = KeycloakAdmin::getClient()->getUsers([
-            'q' => 'nik:' . $user->nik,
-        ]);
-
-        if (empty($keycloakUser)) {
-            info('No keycloak user found for NIK ' . $user->nik);
-            abort(500, 'No keycloak user found for NIK ' . $user->nik);
-        }
-
-        $keycloakUserId = $keycloakUser[0]['id'];
-
-        info("Found matching user in Keycloak with id $keycloakUserId");
+        $keycloakUserId = getKeycloakuserId($user);
 
         // di sini idealnya juga dilakukan proses logout semua session aktif
         // untuk user ini di semua aplikasi. Di contoh ini dilewatkan untuk
@@ -166,6 +154,16 @@ class UserController extends Controller
         return $user->delete();
     }
 
+    public function getUserDetail(Request $request)
+    {
+        $decodedAccessToken = parseJWTToken($request->token);
+
+        return response()->json(
+            User::where('nik', $decodedAccessToken->nik)
+                            ->first()
+            );
+    }
+
     public function resetPassword(Request $request)
     {
         if ($request->isMethod('post')) {
@@ -173,19 +171,7 @@ class UserController extends Controller
 
             info("Resetting password for user with NIK $user->nik");
 
-            // find matching Keycloak User by NIK
-            $keycloakUser = KeycloakAdmin::getClient()->getUsers([
-                'q' => 'nik:' . $user->nik,
-            ]);
-
-            if (empty($keycloakUser)) {
-                info('No keycloak user found for NIK ' . $user->nik);
-                abort(500, 'No keycloak user found for NIK ' . $user->nik);
-            }
-
-            $keycloakUserId = $keycloakUser[0]['id'];
-
-            info("Found matching user in Keycloak with id $keycloakUserId");
+            $keycloakUserId = getKeycloakuserId($user);
 
             // actual keycloak password reset
             $result = KeycloakAdmin::getClient()->resetUserPassword([
@@ -205,5 +191,30 @@ class UserController extends Controller
         }
 
         return view('users.reset_password');
+    }
+
+    public function listSession(Request $request)
+    {
+        $keycloakUserId = getKeycloakUserId($request->user());
+
+        // actual keycloak password reset
+        $sessions = KeycloakAdmin::getClient()->getUserSessions([
+            'id' => $keycloakUserId,
+        ]);
+
+        return view('users.list_session', compact('sessions'));
+    }
+
+    public function removeSession(Request $request, $id)
+    {
+        info("removing session with id $id");
+
+        // actual keycloak password reset
+        $result = KeycloakAdmin::getClient()->revokeUserSession([
+            'session' => $id,
+            'realms' => env('KEYCLOAK_REALM'),
+        ]);
+
+        if ($result) return true;
     }
 }
