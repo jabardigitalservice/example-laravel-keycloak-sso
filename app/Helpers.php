@@ -23,6 +23,14 @@ function isAdmin($user) {
     return in_array($user->role, [ 'admin', 'superadmin' ]);
 }
 
+function getCurrentKeycloakSessionId() {
+    $KEYCLOAK_LOGIN_DETAILS = session('KEYCLOAK_LOGIN_DETAILS');
+
+    if ($KEYCLOAK_LOGIN_DETAILS) return $KEYCLOAK_LOGIN_DETAILS['session_state'];
+
+    return null;
+}
+
 // ini adalah fungsi yang bisa digunakan oleh aplikasi/website pemerintah untuk
 // mendapatkan data profil user dari SIAP berdasarkan nik user yang login
 // melalui sistem SSO.

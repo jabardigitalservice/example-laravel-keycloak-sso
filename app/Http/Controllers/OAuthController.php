@@ -71,8 +71,7 @@ class OAuthController extends Controller
         // maping session_id dari Keycloak dengan session_id dari Laravel. Ini
         // akan diperlukan nantinya untuk proses "backchannel logout". Lihat
         // lebih lanjut di fungsi `logoutWebhook()` di bawah
-        $keycloakSessionId = $keycloakUser->accessTokenResponseBody['session_state'];
-        $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . $keycloakSessionId;
+        $cacheKey = env('APP_NAME') . ':keycloak_session_id_map:' . getCurrentKeycloakSessionId();
         \Cache::put($cacheKey, \Session::getId() );
         info("Map id $cacheKey with session " . \Cache::get($cacheKey));
 

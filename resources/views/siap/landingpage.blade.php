@@ -31,7 +31,7 @@ Status User: {{ isAdmin(Auth::user()) ? 'ADMIN' : 'BUKAN ADMIN' }}
         <label for="">Laravel Session Id: </label> {{ \Session::getId() }}
     </p>
     <p>
-        <label for="">Keycloak Session Id: </label> {{ session('KEYCLOAK_SESSION_ID') }}
+        <label for="">Keycloak Session Id: </label> {{ getCurrentKeycloakSessionId() ?: '-' }}
     </p>
 </aside>
 @endsection
