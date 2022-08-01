@@ -15,7 +15,14 @@ function parseJWTToken($token) {
     $jwks = json_decode($jwks_response, true);
 
     // parsing token JWT menggunakan public key JWK di atas
-    return JWT::decode($token, JWK::parseKeySet($jwks));
+    $result = JWT::decode($token, JWK::parseKeySet($jwks));
+
+    // Idealnya di sini ada validasi tambahan untuk access token yang masuk,
+    // misalnya memeriksa nilai field `iss`, `aud`, dst. Namun karena web ini
+    // hanya contoh, untuk mempesingkat kode di sini tidak akan dilakukan validasi lanjutan
+    // referensi lebih dalam bisa cek: https://datatracker.ietf.org/doc/html/rfc8725#section-3
+
+    return $result;
 }
 
 // Fungsi untuk memeriksa apakah NIK yang diinput  adalah admin di web
