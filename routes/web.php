@@ -37,17 +37,15 @@ use Illuminate\Http\Request;
 // metode yang digunakan di website SIAP untuk memberikan data user login
 // yang sesuai dari SIAP
 if (env('IS_SIAP',false)) {
-    Route::get('/get_user_detail', function(Request $request) {
-        $decodedAccessToken = parseJWTToken($request->token);
+    Route::controller(App\Http\Controllers\UserController::class)
+        ->name('users.')
+        ->group(function () {
+            Route::get('/get_user_detail', 'getUserDetail')->name('get_detail');
 
-        return response()->json(
-            App\Models\User::where('nik', $decodedAccessToken->nik)
-                            ->first()
-            );
+            Route::get('/sessions', 'listSession')->name('list_session');
+            Route::delete('/sessions/{id}', 'removeSession')->name('remove_session');
+            Route::match(['get', 'post'], '/reset_password', 'resetPassword' )->name('reset_password');
     });
-
-    Route::match(['get', 'post'], '/reset_password', [ App\Http\Controllers\UserController::class, 'resetPassword' ])
-         ->name('users.reset_password');
     Route::resource('users', App\Http\Controllers\UserController::class);
 } else {
     Route::get('/mobile-api/me', [ App\Http\Controllers\MobileController::class, 'getCurrentUserData' ]);
