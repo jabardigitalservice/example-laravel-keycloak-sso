@@ -44,6 +44,7 @@ function getCurrentKeycloakSessionId() {
 // mendapatkan data profil user dari SIAP berdasarkan nik user yang login
 // melalui sistem SSO.
 function getCurrentUserProfileFromSIAP($token=null) {
+    info('retrieving user profile from SIAP');
     $accessToken = !is_null($token) ?
                    $token :
                    session('KEYCLOAK_LOGIN_DETAILS')['access_token'] ;
@@ -58,16 +59,21 @@ function getCurrentUserProfileFromSIAP($token=null) {
 
 function getKeycloakUserId($user) {
     // find matching Keycloak User by NIK
-    $keycloakUser = KeycloakAdmin::getClient()->getUsers([
+    $result = KeycloakAdmin::getClient()->getUsers([
         'q' => 'nik:' . $user->nik,
     ]);
 
-    if (empty($keycloakUser)) {
+    if (empty($result)) {
         info('No keycloak user found for NIK ' . $user->nik);
         abort(500, 'No keycloak user found for NIK ' . $user->nik);
     }
 
-    $keycloakUserId = $keycloakUser[0]['id'];
+    if (isset($result['error'])) {
+    info(json_encode($result));
+        abort(500, json_encode($result));
+    }
+
+    $keycloakUserId = $result[0]['id'];
 
     info("Found matching user in Keycloak with id $keycloakUserId");
 

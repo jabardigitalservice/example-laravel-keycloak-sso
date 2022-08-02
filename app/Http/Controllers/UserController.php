@@ -22,7 +22,7 @@ class UserController extends Controller
                 abort(401);
 
             return $next($request);
-        })->except('getUserDetail');
+        })->except('getUserDetail', 'listSession', 'removeSession', 'resetPassword');
     }
     /**
      * Display a listing of the resource.
@@ -63,7 +63,7 @@ class UserController extends Controller
 
         // create new user on keycloak
         try {
-            KeycloakAdmin::getClient()->createUser([
+            $result = KeycloakAdmin::getClient()->createUser([
                 'username' => $user->name,
                 'email' => $user->email,
                 'enabled' => true,
