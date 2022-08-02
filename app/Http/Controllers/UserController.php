@@ -16,13 +16,13 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('getUserDetail');
         $this->middleware(function ($request, $next) {
             if (!isAdmin($request->user()))
                 abort(401);
 
             return $next($request);
-        });
+        })->except('getUserDetail');
     }
     /**
      * Display a listing of the resource.
@@ -133,7 +133,7 @@ class UserController extends Controller
     {
         info("Removing user with NIK $user->nik");
 
-        $keycloakUserId = getKeycloakuserId($user);
+        $keycloakUserId = getKeycloakUserId($user);
 
         // di sini idealnya juga dilakukan proses logout semua session aktif
         // untuk user ini di semua aplikasi. Di contoh ini dilewatkan untuk
@@ -154,14 +154,15 @@ class UserController extends Controller
         return $user->delete();
     }
 
+    // menampilkan data user pemilik NIk yang tercantum di dalam JWT token
     public function getUserDetail(Request $request)
     {
         $decodedAccessToken = parseJWTToken($request->token);
 
         return response()->json(
             User::where('nik', $decodedAccessToken->nik)
-                            ->first()
-            );
+                ->first()
+        );
     }
 
     public function resetPassword(Request $request)
@@ -171,7 +172,7 @@ class UserController extends Controller
 
             info("Resetting password for user with NIK $user->nik");
 
-            $keycloakUserId = getKeycloakuserId($user);
+            $keycloakUserId = getKeycloakUserId($user);
 
             // actual keycloak password reset
             $result = KeycloakAdmin::getClient()->resetUserPassword([
