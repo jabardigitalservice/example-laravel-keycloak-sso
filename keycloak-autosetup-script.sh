@@ -11,7 +11,7 @@ USER_PASSWORD=testpassword
 CLIENT_BASE_URL="http://localhost:8000"
 
 # establish connection session to keycloak
-$KCADM config credentials --server http://localhost:8080 \
+$KCADM config credentials --server ${KEYCLOAK_BASE_URL} \
 --user admin \
 --password admin \
 --realm master
@@ -52,6 +52,12 @@ KEYCLOAK_PAYLOAD=$(cat <<EOF
         "roles",
         "email"
     ],
+
+	"attributes": {
+		"backchannel.logout.revoke.offline.tokens": "false",
+		"backchannel.logout.session.required": "true",
+		"backchannel.logout.url": "${CLIENT_BASE_URL}/auth/logout_webhook"
+	},
 
     "protocolMappers": [
         {
